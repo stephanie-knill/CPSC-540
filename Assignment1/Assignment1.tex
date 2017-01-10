@@ -1,0 +1,178 @@
+% =================================== Pre-Amble ===================================
+      
+% ===== Format =====
+\documentclass[11pt, oneside]{article}   	% imports package {article} and specify option(s) [11pt, oneside]
+
+\usepackage{geometry}               
+	\geometry{letterpaper}         
+    %\geometry{landscape}
+
+\usepackage[parfill]{parskip}    			% Begin paragraphs w/ empty line (rather than an indent)
+
+% Colours
+% list of colours: https://www.sharelatex.com/learn/Using_colours_in_LaTeX
+\usepackage{graphicx, subcaption}
+\usepackage[usenames, dvipsnames]{color}     % font colour:    \textcolor{<colour>}{text}
+          									% highlight text: \colorbox{<color>}{text}
+\usepackage{soul}							% highlight text: \hl{}     %only  yellow															
+    									
+% Bullets
+\usepackage{enumerate}   					%specify type of enumeration: \being{enumerate}[<type of enumeration>]
+    
+% Footnote Spacing
+\setlength{\footnotesep}{0.4cm}               % specify spacing b/w footnotes
+
+% ===== Mattematics =====
+% American Mathematics Society packages
+\usepackage{amsmath}	   		% math
+\usepackage{amssymb}         % symbols
+\usepackage{amsthm}          % theorems
+
+% QED
+\newcommand*{\QEDA}{\hfill\ensuremath{\blacksquare}}         % make qed filled square:  \QEDA
+\newcommand*{\QEDB}{\hfill\ensuremath{\square}}              % make qed empty square:   \QEDB 
+\renewcommand\qedsymbol{\ensuremath{\blacksquare}}		    % Proof environment: filled QED
+    
+% 'Section' Counters
+\newtheorem{theorem}{Theorem}[section]					% Counter: section.theorem
+\newtheorem{lemma}[theorem]{Lemma}						% Counter: section.theorem
+\newtheorem{proposition}[theorem]{Proposition}			% Counter: section.theorem
+\newtheorem{proposition*}{Proposition}					% Counter: proposition
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]				% Counter: section.definition
+\newtheorem{conjecture}{Conjecture}[section]				% Counter: section.conjecture
+\newtheorem{example}{Example}[section]					% Counter: section.example
+
+	% No Counters
+	\theoremstyle{remark}
+	\newtheorem*{remark}{Remark}
+	\newtheorem*{note}{Note}
+	\newtheorem*{corollary}{Corollary}
+	
+% Set Shortcuts
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\C}{\ensuremath{\mathbb{C}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+	
+% Augmented Matrix
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+\hskip -\arraycolsep
+ 	\let\@ifnextchar\new@ifnextchar
+ 	\array{#1}}
+\makeatother
+    
+% Spacing Units
+\usepackage{siunitx}					% Syntax: \SI{value}{unit}
+									%	-> e.g. $\SI{-9.81}{ms^{-2}}$
+	
+% Writing Code
+\usepackage{listings}
+	% Block of code: \begin{lstlisting} <code> \end{lstlisting}
+	% External File: \lstinputlisting{/somepath/filename.py}		%e.g. for python
+	%	- Specify Language: \lstinputlisting[language=Python]{/somepath/filename.py}
+	%	- Specify Lines: \lstinputlisting[language=Python, firstline=6, lastline=15]{/somepath/filename.py}
+
+	% MATLAB (need mcode.sty in folder)
+	%\usepackage[]{mcode} % http://www.mathworks.com/matlabcentral/fileexchange/8015-m-code-latex-package
+		% Syntax:
+		%	- In Sentence: \mcode{<code>}
+		%	- Footnote: \footnote{ \mcodefn{ <code> } }
+		%	**Also extends all listings pacakge
+
+
+% ===== Figures =====
+\usepackage{caption}
+\captionsetup[figure]{labelfont=bf}    		% make figure labels boldface
+\captionsetup[table]{labelfont=bf}     		% make table labels boldface
+
+\usepackage[hidelinks]{hyperref}             % Allows for clickable references
+
+% Tables
+\usepackage[none]{hyphenat}              	% Stops breaking-up words in a table (i.e. no hyphens)                                                             
+    
+\usepackage{array}   
+	\newcolumntype{x}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}       % center fixed column width: x{<len>}                      
+	% apply stuff to entire row:
+	%	e.g. bold: \rowstyle{\bfseries}            
+	%\newcolumntype{$}{>{\global\let\currentrowstyle\relax}}   %Commented b/c '$' making everything green...                              
+	\newcolumntype{^}{>{\currentrowstyle}}
+	\newcommand{\rowstyle}[1]{\gdef\currentrowstyle{#1} #1\ignorespaces}
+    
+% Images
+\graphicspath{ {images/} }					% directory that your images are located in within your current directory
+    
+% Diagrams
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\tikzset{line/.style={-latex'}}
+	\usepackage{tkz-berge}
+	\usetikzlibrary{shapes,arrows}
+	\usetikzlibrary{patterns}
+
+%Bibliography
+\usepackage[numbers,sort&compress]{natbib}   %for multiple references: sorts  (i.e. [1,2] NOT [2, 1] ), compresses (i.e. [1-3] )
+\usepackage[nottoc]{tocbibind}               % add bibliography to table of contents
+
+
+%Miscellaneous
+\usepackage{wasysym} 	 					% \smiley{} \frownie{} \blacksmiley{}
+
+
+%================== Header & Footer =========================
+\usepackage{fancyhdr}
+\usepackage{lastpage}      % ensures you can reference LastPage (i.e. Page 2 of 10)
+
+\renewcommand{\headrulewidth}{0.4pt}		% Decorative Header line: thickness={0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}		% Decorative Footer line: thickness={0.4pt}
+
+\setlength{\headheight}{13.6pt} 			% space b/w top of page & header
+\setlength{\headsep}{0.3in}				% space b/w page header and body
+
+%Make Header & Footer    
+\pagestyle{fancy}
+    \lhead{Stephanie Knill} 		% controls the left corner of the header
+    \chead{} 					% controls the center of the header
+    \rhead{} 					% controls the right corner of the header
+    \lfoot{} 					% controls the left corner of the footer
+    \cfoot{Page~\thepage\ of \pageref{LastPage}}		% controls the center of the footer
+    													%Page~\thepage\  if just want Page x
+    \rfoot{}			 			% controls the right corner of the footer
+
+
+% =================================== Document ===================================
+\begin{document}
+
+% ========== Title Page ==========
+\title{CPSC 540 --- Assignment 1 \\
+\line(1,0){360} \\				%(slope x, y){length of line}
+\vspace{0.5cm}
+}
+
+
+\author{
+Chaurette, Laurent\\
+84060128
+\and
+Knill, Stephanie\\
+54882113
+\and
+Vincart-Emard, Alexandre\\
+85135127
+}
+\date{}
+\maketitle
+
+%\thispagestyle{empty}			% Remove header from this (first) page
+								% 	- Change 'empty' to 'plain' to keep numbering
+%\cleardoublepage
+
+% ========== Document ==========
+
+
+
+
+\end{document}
