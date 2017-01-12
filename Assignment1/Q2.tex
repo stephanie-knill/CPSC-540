@@ -1,34 +1,194 @@
 \section{Convex Functions}
 \subsection{Minimizing Stricly Convex Quadratic Functions}
-1. \begin{equation}
-f(w) = \frac{1}{2}\parallel w - v\parallel^{2}
+\begin{enumerate}
+\item \begin{equation}
+f(w) = \frac{1}{2}\| w - v\|^{2}
 \end{equation}
 Taking the gradient of $f(w)$, we get
 \begin{align}
 \nabla f(w) &= \nabla \left(\frac{1}{2}(w-v)^{T}(w-v)\right)\\
 &=\frac{1}{2}\;\nabla\left(w^{T}w-2w^{T}v +v^{T}v\right)\nonumber\\
-&=w^{T}-v^{T}.\nonumber
+&=w-v.\nonumber
 \end{align}
 We now set the gradient to 0 to find the critical points
 \begin{equation}
-\nabla f(w) = 0 = w^{T} - v^{T},
+\nabla f(w_{min}) = 0 = w_{min} - v,
 \end{equation}
-implies $w = v$.
+implies 
+\begin{equation}
+w_{min} = v.
+\end{equation}
 
-2. \begin{equation}
-f(w) = \frac{1}{2}\parallel Xw - y\parallel^{2}+\frac{1}{2}w^{T}\Lambda w
+\item \begin{equation}
+f(w) = \frac{1}{2}\| Xw - y\|^{2}+\frac{1}{2}w^{T}\Lambda w
 \end{equation}
 Taking the gradient of $f(w)$, we get
 \begin{align}
-\nabla f(w) &= \nabla \left(\frac{1}{2}\parallel Xw - y\parallel^{2}+\frac{1}{2}w^{T}\Lambda w\right)\\
+\nabla f(w) &= \nabla \left(\frac{1}{2}\| Xw - y\|^{2}+\frac{1}{2}w^{T}\Lambda w\right)\\
 &=\frac{1}{2}\nabla \left[w^{T}\left(X^{T}X+\Lambda\right)w-2w^{T}X^{T}y+y^{T}y\right]\nonumber\\
-&=\frac{1}{2}\left(2X^{T}X+\Lambda+\Lambda^{T}\right)w-y^{T}X\nonumber.
+&=\frac{1}{2}\left(2X^{T}X+\Lambda+\Lambda^{T}\right)w-X^{T}y\nonumber.
 \end{align}
 Setting the gradient to 0, we find the critical point
 \begin{equation}
-0 = \frac{1}{2}\left(2X^{T}X+\Lambda+\Lambda^{T}\right)w-y^{T}X
+0 = \frac{1}{2}\left(2X^{T}X+\Lambda+\Lambda^{T}\right)w_{min}-X^{T}y
 \end{equation}
 which gives,
 \begin{equation}
-\left(2X^{T}X+\Lambda+\Lambda^{T}\right)w = 2y^{T}X 
+\left(2X^{T}X+\Lambda+\Lambda^{T}\right)w_{min} = 2X^{T}y 
 \end{equation}
+and finally, 
+\begin{equation}
+w_{min}=2\left(2X^{T}X+\Lambda+\Lambda^{T}\right)^{-1}X^{T}y
+\end{equation}
+
+\item
+\begin{equation}
+f(w) = \frac{1}{2}\sum_{i=1}^{n} v_{i}\left(w^{T}x_{i} - y_{i}\right)^{2}+\frac{\lambda}{2}\| w-w^{0}\|^{2}
+\end{equation}
+Taking the gradient of $f(w)$, we get
+\begin{align}
+\nabla f(w) &= \nabla\left(\frac{1}{2}\sum_{i=1}^{n} v_{i}\left(w^{T}x_{i} - y_{i}\right)^{2}+\frac{\lambda}{2}\| w-w^{0}\|^{2}\right)\\
+&=\frac{1}{2}\nabla\left(\sum_{i=1}^{n}v_{i}\left(w^{T}x_{i}x_{i}^{T}w-2w^{T}x_{i}y_{i}+y_{i}^{2}\right)+\lambda\left(w^{T}w-2w^{T}w^{0}+w^{0^{T}}w^{0}\right) \right)\nonumber\\
+&= \sum_{i=1}^{n}v_{i}\left(x_{i}x_{i}^{T}w-x_{i}y_{i}\right)+\lambda\left(w-w^{0}\right)\nonumber.
+\end{align}
+Setting the gradient to 0, we find the critical point
+\begin{equation}
+0 = \sum_{i=1}^{n}v_{i}\left(x_{i}x_{i}^{T}w_{min}-x_{i}y_{i}\right)+\lambda I\left(w_{min}-w^{0}\right),
+\end{equation}
+where $I$ is the $d\times d$ identity matrix. Thus,
+\begin{equation}
+\lambda Iw^{0} + \sum_{i=1}^{n} v_{i}x_{i}y_{i}= \left(\sum_{i=1}^{n}v_{i}x_{i}x_{i}^{T}+\lambda I\right)w_{min}.
+\end{equation}
+We finally find 
+\begin{equation}
+w_{min} = \left(\sum_{i=1}^{n}v_{i}x_{i}x_{i}^{T}+\lambda I\right)^{-1}\left(\lambda Iw^{0} + \sum_{i=1}^{n} v_{i}x_{i}y_{i}\right)
+\end{equation}
+\end{enumerate} 
+
+\subsection{Proving Convexity}
+\begin{enumerate}
+\item\begin{equation}
+f(w) = -\log(aw)
+\end{equation}
+\par As the log function is twice differentiable, we will prove convexity by calculating the Hessian matrix
+\begin{equation}
+f^{\prime\prime}(w) = \frac{1}{w^{2}}> 0,\;\;\; \forall\; w\in \mathcal{R}^{+}
+\end{equation}
+The hessian is therefore positive definite over the domain of $f(w)$ which means f is convex.
+
+\par\item\begin{equation}
+f(w) = \frac{1}{2}w^{T}Aw+b^{T}w+\gamma
+\end{equation}
+Once again, we will use the Hessian matrix criteria,
+\begin{equation}
+\nabla^{2}f(w) = \frac{1}{2}\left(A+A^{T}\right)\succeq 0.
+\end{equation}
+As A is positive semi-definite, its transpose is also positive semi-definite and so is the sum $A+A^{T}$.  The Hessian is therefore positive semi-definite, which implies f(w) is convex.
+
+\par\item\begin{equation}
+f(w) = \|w \|_{p}
+\end{equation}
+Here, we will choose two points, $(v,f(v))$ and $(w,f(w))$ and show that the line always lies above the function itself. The line joining the two points can be written parametrically as
+\begin{equation}
+\theta\left(\sum_{i=1}^{n}\mid w_{i}\mid^{p}\right)^{1/p}+(1-\theta)\left(\sum_{i=1}^{n}\mid v_{i}\mid^{p}\right)^{1/p},\;\;\;\; 0\le\theta \le 1
+\end{equation}
+while the function in between those two points can be expressed as
+\begin{equation}
+\left(\sum_{i=1}^{n}\mid \theta w_{i}+(1-\theta)v_{i}\mid^{p}\right)^{1/p}.
+\end{equation}
+However, the triangle inequality gives us directly that
+\begin{align}
+f(\theta w+(1-\theta)v)&=\left(\sum_{i=1}^{n}\mid \theta w_{i}+(1-\theta)v_{i}\mid^{p}\right)^{1/p}\\
+&\le \theta\left(\sum_{i=1}^{n}\mid w_{i}\mid^{p}\right)^{1/p}+(1-\theta)\left(\sum_{i=1}^{n}\mid v_{i}\mid^{p}\right)^{1/p}\nonumber\\
+&=\theta f(w)+(1-\theta)f(v),
+\end{align}
+showing that the line joining two points is always above the function itself and therefore $f(w)$ is convex.
+
+\par\item\begin{equation}
+f(w) = \sum_{i=1}^{n}\log\left(1+\exp\left(-y_{i}w^{T}x_{i}\right)\right)
+\end{equation}
+Once again, we will compute the Hessian matrix.  First of all, we find the gradient
+\begin{align}
+\nabla f(w)=\sum_{i=1}^{n}\frac{-y_{i}x_{i}}{1+\exp\left(-y_{i}w^{T}x_{i}\right)}.
+\end{align}
+The Hessian is therefore
+\begin{align}
+\nabla^{2} f(w)=\sum_{i=1}^{n}\frac{y_{i}^{2}x_{i}x_{i}^{T}}{\left[1+\exp\left(-y_{i}w^{T}x_{i}\right)\right]^{2}},
+\end{align}
+which is a real symmetric matrix.  This implies the Hessian is positive semi-definite and the function $f(w)$ is convex.
+
+\par\item\begin{equation}\label{eq:2.2.5}
+f(w) = \|Xw-y\|_{p}+\lambda \| Aw\|_{q}
+\end{equation}
+The first term on the right hand side of equation (\ref{eq:2.2.5}) is simply the affine composition of the $l_{p}-norm$ which we have showed is convex in 3.  That term is therefore convex.  
+\par The second term of the expression is the scalar product of the affine composition of the $l_{q}-norm$ and is also convex.
+\par The sum of two convex functions is convex and therefore $f(w)$ is convex.
+
+\par\item\begin{equation}
+f(w) = \sum_{i=1}^{N}\max\{0,\mid w^{T}x_{i}-y_{i}\mid -\epsilon\}+\frac{\lambda}{2}\|w\|_{2}^{2}
+\end{equation}
+The second term on the right hand side is convex as it is the scalar product of the $l_{2}-norm$ which is convex.
+
+\par As of the first term on the right hand side, the function $g(w) = 0$ is convex.  The function $h(w) = w^{T}x_{i}-y_{i}$ is convex as it is a linear function.  taking the absolute value of $h(w)$ can be written as $|h(w)| = \max\{-h(w),h(w)\}$ and the maximum of two convex functions is convex.  Substracting a constant $\epsilon$ remains convex as the addition of convex functions is convex.  The maximum of $g(w)$ and $|h(w)|-\epsilon$ is therefore still convex and so is summing over i as it is the sum of convex functions.
+
+\par As both terms on the right hand side are convex and $f(w)$ is the sum of those two terms, $f(w)$ is thus convex.
+
+\par\item\begin{equation}
+f(w) = \max_{ijk}\{|x_{i}|+|x_{j}|+|x_{k}|\}
+\end{equation}
+Once again, the absolute value $|x_{i}| = \max\{x_{i},-x_{i}\}$ is convex as it is the maximum of two convex functions.  The sum $|x_{i}|+|x_{j}|+|x_{k}|$ is convex as it is the sum of convex functions.  The maximum over ijk preserves convexity and therefore $f(w)$ is convex.
+\end{enumerate}
+
+\subsection{Robust Regression}
+\begin{enumerate}
+\item RobustRegression(X,y)
+
+\lstset{language=Matlab,%
+    %basicstyle=\color{red},
+    breaklines=true,%
+    morekeywords={matlab2tikz},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{lilas},
+    commentstyle=\color{green},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=9pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style},    
+}
+
+\lstinputlisting{RobustRegression.m}
+
+This functions obtains an average absolute error of
+\begin{equation}
+errL1 = 3.0666.
+\end{equation}
+
+\par\item SVM Regression
+The goal is to find the minimizer w to the function
+\begin{equation}
+f(w) = \sum_{i=1}^{n}\max\{0,|w^{T}x_{i}-y_{i}|-\epsilon\}.
+\end{equation}
+We transform this into a linear program by introducing two sets of slack variables $\xi_{i},\xi_{i}^{*}\ge 0$.  Our linear program will be the following:
+\par objective function: 
+\begin{equation}
+\sum_{i=1}^{n} \xi_{i}+\xi_{i}^{*}
+\end{equation}
+\newline Constraints:
+\begin{align}
+w^{T}x_{i}-y_{i}&\le \epsilon+\xi_{i}\\
+y_{i}-w^{T}x_{i}&\le \epsilon+\xi_{i}^{*}\\
+\xi_{i},\xi_{i}^{*}&\ge 0.
+\end{align}
+basically, when $w^{T}x_{i}-y_{i}$ is greater(smaller) then 0, we want to minimize $\xi_{i}(\xi_{i}^{*})$ while $\xi_{i}^{*}(\xi_{i})$ will go to zero.  
+
+\par\item svRegression(X,y,$\epsilon$)
+\lstinputlisting{svRegression.m}
+This function obtains an average absolute error of
+\begin{equation}
+errL1 = 3.0746
+\end{equation}
+\end{enumerate}
