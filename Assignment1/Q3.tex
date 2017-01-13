@@ -1,3 +1,95 @@
+%======================================
 \section{Numerical Optimization}
+%======================================
 
-Alex
+%-------------------------------------------------------------------
+\subsection{Gradient Descent and Newton's Method}
+\label{sec:Q3.1}
+%-------------------------------------------------------------------
+
+In this section, we investigate the effect on performance of various changes to the function \textit{findMin}, which implements a gradient descent complemented by a backtracking line-search to find the step size $\alpha$ that satisfies the Armijo ``sufficient decrease" condition
+\be f(x^{t+1}) \leq f(x^t) - \gamma \alpha \nabla f(x^t)^T d^t, \;\;\;\; \gamma = 10^{-4}, \label{armijo} \ee
+where $d^t$ is the direction taken by the gradient during the descent. In particular, we will look at both \textit{funEvals}, the number of function and gradient evaluations needed throughout the optimization process, as well as \textit{btEvals}, the number of backtracking iterations needed to satisfy condition (\ref{armijo}).
+
+\begin{enumerate}
+\item When backtracking, replacing the cubic-Hermit interpolation by 
+\be \alpha \leftarrow \frac{\alpha}{2} \ee  
+yields \textit{funEvals} = 83 and \textit{btEvals} = 69, which is evidence of a sharp decline in performance.
+\item Keeping the cubic-Hermit interpolation during the backtracking portion of the algorithm, and instead updating $\alpha$ for the next iteration to be the Barzilai-Borwein step-size
+\be \alpha \leftarrow - \alpha \frac{v^T \nabla_\text{new} f (w)}{v^T v}, \;\;\;\;\; v = \nabla_\text{new} f(w) - \nabla_\text{old} f(w), \ee
+we obtain the best performance with \textit{funEvals} = 21 and \textit{btEvals} = 8.
+\item Fixing the step size to be constant and equal to $\alpha = 1/L$, where 
+\be L = \frac{1}{4} \max \left( \text{eig} ( X^T X) \right) + \lambda, \ee
+gives us \textit{funEvals} = 35 and \textit{btEvals} = 0.
+\item Using the Newton direction 
+\be d = \left[ \nabla^2 f(w) \right]^{-1} \nabla f(w), \ee
+performs well, with \textit{funEvals} = 31 and \textit{btEvals} = 0.
+\end{enumerate}
+Thus our results suggest that $(2) > (4) > (3) > (0) \gg (1)$, where $(0)$ represents the gradient descent routine \textit{findMin} without modification.
+  
+%-------------------------------------------------------------------
+\subsection{Hessian-Free Newton}
+%-------------------------------------------------------------------
+
+The Newton method requires the formation and inversion of the Hessian matrix, which do not come cheap. Instead, it is possible to implement a ``Hessian-free" Newton's method by solving 
+\be \nabla f(w) + \nabla^2 f(w) \; d = 0 \ee
+for the direction of descent $d$ by using a \textit{conjugate gradient} algorithm, implemented by the function \textit{pcg} in MATLAB.\\
+\\
+The first step is to define a function \textit{Hvfunc} that calculates the Hessian-vector product
+\be \nabla^2 f(w) \; d = X^T ( D(X d) ), \ee
+where $D$ is a diagonal matrix with elements
+\be D_{ii} = \sigma(y^i w^T x^i) \sigma(-y^i w^T x^i), \;\;\;\;\; \sigma(z) = \frac{1}{1 + e^{-z}}. \ee
+With \textit{Hvfunc} in hand, it is straightforward to calculate $d$ via \textit{pcg}, which we may write in MATLAB as
+\begin{lstlisting}[language=octave]
+>> Hv = @(v) Hvfunc(w,v,X,y,lambda);
+>> d = pcg(Hv,-g,optTol);        
+\end{lstlisting}
+The output of \textit{findMin} on the dataset \textit{rcv1\_train\_binary.mat} reads
+\begin{lstlisting}[language=octave]
+>> pcg converged at iteration 12 to a solution with relative 
+residual 0.0071.
+>> Backtracking...
+>>      3    -1.13091e+00     4.82515e+03     4.01011e+01
+>> pcg converged at iteration 9 to a solution with relative 
+residual 0.0085.
+>> Backtracking...
+>>      5    -8.00255e-01     4.23711e+03     1.73080e+01
+>> pcg converged at iteration 9 to a solution with relative 
+residual 0.0077.
+>> Backtracking...
+>>      7    -8.56343e-01     4.10167e+03     9.88761e+00
+>> pcg converged at iteration 9 to a solution with relative 
+residual 0.0051.
+>> Backtracking...
+>>      9    -9.23189e-01     4.08601e+03     3.51711e+00
+>> pcg converged at iteration 8 to a solution with relative 
+residual 0.008.
+>> Backtracking...
+>>     11    -9.77696e-01     4.08547e+03     2.82335e-01
+>> pcg converged at iteration 8 to a solution with relative 
+residual 0.0051.
+>> Backtracking...
+>>    13    -9.98461e-01     4.08547e+03     1.28566e-03
+>> Problem solved up to optimality tolerance
+\end{lstlisting}
+Therefore we conclude that the Hessian-free Newton's method performs remarkably well, using only \textit{funEvals} = 13 and \textit{btEvals} = 6 before reaching a minimum despite $X$ having dimension $20,242 \times 47,236$.
+
+
+%-------------------------------------------------------------------
+\subsection{Multi-Class Logistic Regression}
+%-------------------------------------------------------------------
+
+In this section, we consider the softmax probability
+\be p(y^i \vert W, x^i) = \frac{\exp(w_{y^i}^T x^i)}{\sum_{c=1}^k \exp(w_c^T x^i)}, \ee
+which yields the loss function
+\be f(W) = \sum_{i=1}^n \left[ - w_{y^i}^T x^i  + \log \left( \sum_{c^\prime = 1}^k \exp(w_c^T x^i) \right) \right]. \ee
+In this notation, $w_c$ is column $c$ of the matrix $W$, and each column acts as the weights of a classifier for one of the $k$ classes, each assigning a probability $p(y^i \vert W, x^i)$ to example $i$. \\
+\\
+Given that $W$ is a $d \times k$ matrix, we can also express its gradient as a $d \times k$ matrix; its components can be written as
+\begin{align} \frac{\partial f}{\partial W_{ac}} =&\; - \sum_{i=1}^n \left[ X_{i a} \left( \delta_{y^i \; c} - \frac{ \exp(XW)_{ic} }{\sum_{c^\prime=1}^k \exp(XW)_{ic^\prime}} \right) \right] \\
+=&\;  - \sum_{i=1}^n \left[ X_{i a} \left( \delta_{y^i \; c} - p(y^i = c \vert W, x^i) \right) \right], \end{align}
+where $\delta_{ij} = 1$ if $i=j$ and 0 otherwise. \\
+\\
+The loss function and its gradient are straightforward to vectorize in MATLAB, and one needs only to reshape the weight and gradient matrices into vectors in order to use gradient descent as before. We also remark that \textit{findMin} needs to be modified accordingly to accommodate this slight change of notation. We invite the reader to read our code in the appendix in order to assess our results.\\
+\\
+Using the \textit{findMin} function without any of the modifications of Section \ref{sec:Q3.1} implemented, we reach a validation error of 0.024, or in other words a success rate of 97.6\% on the validation set. This error is obtained after the maximum number of function evaluations, \textit{funEvals} = 500, was reached, together with \textit{btEvals} = 258. We note that for \textit{funEvals} = 5,000, the validation error drops to 0.01 to yield a 99\% success rate.
