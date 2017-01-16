@@ -1,3 +1,233 @@
 \section{Fundmanentals}
 
-Stephanie
+\textit{The purpose of this question is to give you practice using the mathematical and coding notation that we will adopt in the course.}
+
+\subsection{Matrix Notation}
+
+\textit{For this question we'll use the following Householder-like notation:}
+\begin{enumerate}
+	\item $\alpha$ is a scalar.
+	\item $w$, $a$, and $b$ are $d$ by $1$ column-vectors.
+	\item $y$ and $v$ are $n$ by $1$ column-vectors (with elements $y^i$ and $v_i$).
+	\item $A$ is a $d$ by $d$ matrix, not necessarily symmetric (with elements $a_{ij}$).
+	\item $V$ is a diagonal matrix with $v$ along the diagonal.
+	\item $B$ is a diagonal matrix with $b$ along the diagonal.
+	\item $X$ is a $n$ by $d$ matrix (with rows $(x^i)^T$).
+\end{enumerate}
+
+%\item $a$ and $b$ are length-$d$ column-vectors.
+%\item Element $i$ of $b$ is denoted by $b_i$.
+%\item $A$ and $B$ are $d$ by $d$ matrices.
+%\item Row $i$ row of $A$ is denoted by $a_i^T$.
+%\item $W$ is a \emph{symmetric} $d$ by $d$ matrix.
+
+
+\blu{\textit{Express the gradient $\nabla f(w)$ and Hessian $\nabla^2 f(w)$ of the following functions in matrix notation, simplifying as much as possible}}.
+\begin{enumerate}
+	\item \textit{The linear function}
+	$$f(w) = w^Ta + \alpha + \sum_{j=1}^d w_ja_j.$$
+	
+	\textbf{Gradient}
+	\begin{align*}
+		f(w) & = w^T\alpha + \alpha + w^T\alpha \\
+		& = 2w^T \alpha + \alpha \\
+		\therefore \nabla f(w) & = 2a
+	\end{align*}
+	\textbf{Hessian}
+	\begin{align*}
+		\nabla^2 f(w) = 0
+	\end{align*}
+	
+	\item \textit{The linear function}
+	$$f(w) = a^Tw + a^TAw + w^TA^Tb.$$
+
+	\textbf{Gradient}
+	\begin{align*}
+		\nabla f(w) & = a + A^Ta + A^Tb
+	\end{align*}
+	\textbf{Hessian}
+	\begin{align*}
+		\nabla^2 f(w) = 0
+	\end{align*}
+	
+	\item \textit{The quadratic function}
+	$$f(w) = w^Tw + w^TX^TXw + \sum_{i=1}^d\sum_{j=1}^d w_iw_ja_{ij}.$$
+	
+	\textbf{Gradient}
+	\begin{align*}
+		f(w) & = w^Tw + w^TX^TXw + w^TAw	\\	
+		\therefore \nabla f(w) & = 2w + 2(X^TX)w + (A+A^T)w
+	\end{align*}
+	\textbf{Hessian}
+	\begin{align*}
+		\nabla^2 f(w) = 2I + 2X^TX + A + A^T
+	\end{align*}
+	
+	\item \textit{L2-regularized weighted least squares,}
+	$$f(w) = \frac{1}{2}\sum_{i=1}^n v_i(w^Tx^i - y^i)^2 + \frac{\lambda}{2}\norm{w}^2$$
+
+	\textbf{Gradient}
+	\begin{align*}
+		f(w) & = \frac{1}{2} \sum_{i=1}^n v_i [w^Tx^iw^Tx^i - w^Tx^iy^i - 2y^iw^Tx^i + y^iy^i] + \frac{\lambda}{2}\norm{w}^2 \\
+		\therefore \nabla f(w) & = \frac{1}{2} \sum_{i=1}^n v_i [2x^ix^{iT}w - 2y^ix^i] + \frac{\lambda}{2} \cdot 2w \\
+		& = \sum_{i=1}^n v_i [x^ix^{iT}w - y^ix^i] + \lambda w
+	\end{align*}
+	\textbf{Hessian}
+	\begin{align*}
+		\nabla^2 f(w) & = \sum_{i=1}^n v_i[x^ix^{iT}] + \lambda I
+	\end{align*}
+		
+	\item \textit{Weighted L2-regularized probit regression,}
+	$$f(w) = - \sum_{i=1}^n \log p(y^i | x^i w) + \frac{1}{2}\sum_{j=1}^d b_jw_j^2.$$
+	\textit{where $y^i \in \{-1,+1\}$ and the likelihood of a single example $i$ is given by}
+	$$p(y^i| x^i, w) = \Phi(y^iw^Tx^i).$$
+	\textit{where $\Phi$ is the cumulative distribution function (CDF) of the standard normal distribution.}
+	
+	\textbf{Gradient}
+	\begin{align*}
+		f(w) & = - \sum_{i=1}^n \log \Phi(y^iw^Tx^i) + \frac{1}{2}\sum_{j=1}^d b_jw_j^2 \\
+		& = - \sum_{i=1}^n \log  \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{y^iw^Tx^i} e^{-t^2/2} dt + \frac{1}{2}\sum_{j=1}^d b_jw_j^2 \\
+		%& = - \sum_{i=1}^n \Bigg[ \log  \frac{1}{\sqrt{2\pi}} + \log \int_{-\infty}^{y^iw^Tx^i} e^{-t^2/2} dt \Bigg] + \frac{1}{2}b^Tw^2 \\
+	\end{align*}
+	
+	For ease of notation, let the vector $c$ be defined by the CDF (i.e. $c = \int_{-\infty}^{y^iw^Tx^i} e^{-t^2/2} dt$), with elements $c_i$. And so we have
+	\begin{align*}
+		f(w) & = - \sum_{i=1}^n \log c_i + \frac{1}{2}\sum_{j=1}^d b_jw_j^2
+	\end{align*}
+	
+	Since the derivative of the CDF is the PDF, we will denote it as the vector $p$ with elements $p_i$. Now computing the gradient
+	\begin{align*}
+		\nabla f(w) & = - \sum_{i=1}^n \frac{1}{c_i} \cdot p_iy^ix^i+ b^Tw \\
+	\end{align*}
+
+	\textbf{Hessian}
+	
+	Since the PDF $p$ unfortunately contains $w$, we must take the product rule 
+	\begin{align*}
+		\nabla^2 f(w) & = - \sum_{i=1}^n y^ix^i \Big[-\frac{1}{c_i^2} p_ip_i^Ty_i^Tx_i^T p_i + \frac{1}{c_i} p_i' + \frac{1}{c_i}p_i'y_i^Tx_i^T \Big] + b
+	\end{align*}
+	to give us our desired Hessian.
+	
+\end{enumerate}
+
+
+\textit{Hint: You can use the results we showed in class to simplify the derivations. You can use $0$ to represent the zero vector or a matrix of zeroes and $I$ to denote the identity matrix. It will help to convert the fourth example to matrix notation first. For the fifth example, it is useful to define a vector $c$ containing the CDF $\Phi(y^iw^Tx^i)$ as element $c_i$ and a vector $p$ containing the corresponding PDF as element $p_i$. For the fifth one you'll need to define new vectors to express the gradient and Hessian in matrix notation (and remember the relationship between the PDF and CDF). As a sanity check, make sure that your results have the right dimension.}
+
+
+
+\subsection{Regularization and Cross-Validation}
+
+Download \emph{a1.zip} from the course webpage, and start Matlab in a directory containing the extracted files. If you run the script \emph{example\_nonLinear}, it will:
+\enum{
+\item Load a one-dimensional regression dataset.
+\item Fit a least-squares linear regression model.
+\item Report the test error.
+\item Draw a figure showing the training/testing data and what the model looks like.
+}
+Unfortunately, this is not a great model of the data, and the figure shows that a linear model is probably not suitable.
+\enum{
+\item Write a function called \emph{leastSquaresRBFL2} that implements \emph{least squares using Gaussian radial basis functions (RBFs) and L2-regularization}. \\You should start from the \emph{leastSquares} function and use the same conventions: $n$ refers to the number of training examples, $d$ refers to the number of features, $X$ refers to the data matrix, $y$ refers to the targets, $Z$ refers to the data matrix after the change of basis, and so on. Note that you'll have to add two additional input arguments ($\lambda$ for the regularization parameter and $\sigma$ for the Gaussian RBF variance) compared to the \emph{leastSquares} function. To make your code easier to understand/debug, you may want to define a new function \emph{rbfBasis} which computes the Gaussian RBFs for a given training set, testing set, and $\sigma$ value. \blu{Hand in your function and the plot generated with $\lambda = 1$ and $\sigma = 1$.}
+\item When dealing with larger datasets, an important issue is the dependence of the computational cost on the number of training examples $n$ and the number of features $d$. \blu{What is the cost in big-O notation of training the model on $n$ training examples with $d$ features under (a) the linear basis, and (b) Gaussian RBFs (for a fixed $\sigma$)? What is the cost of classifying $t$ new examples under these two bases? } Assume that multiplication by an $n$ by $d$ matrix costs $O(nd)$ and that inverting a $d$ by $d$ linear system costs $O(d^3)$.
+\item Modify the training/validation procedure to use 10-fold cross-validation on the training set to select $\lambda$ and $\sigma$. \blu{Hand in your cross-validation procedure and the plot you obtain with the best values of $\lambda$ and $\sigma$}
+}
+
+Note:  If you find that calculating the Euclidean distances between all pairs of points takes too long, the following code will form a matrix containing the squared Euclidean distances between all training and test points:
+\begin{verbatim}
+[n,d] = size(X);
+[t,d] = size(Xtest);
+D = X.^2*ones(d,t) + ones(n,d)*(Xtest').^2 - 2*X*Xtest';
+\end{verbatim}
+Element $D(i,j)$ gives the squared Euclidean distance between training point $i$ and testing point $j$.
+
+
+
+
+\subsection{MAP Estimation}
+
+In class, we showed that under the assumptions
+\[
+y^i \sim \mathcal{N}(w^Tx^i,1), \quad w_j \sim \mathcal{N}\left(0,\frac{1}{\lambda}\right),
+\]
+the MAP estimate is equivalent to solving the L2-regularized least squares problem
+\[
+f(w) = \frac{1}{2}\norm{Xw - y}^2 + \frac \lambda 2 \norm{w}^2,
+\]
+in the ``loss plus regularizer'' framework.
+\blu{For each of the alternate assumptions below, write it in the ``loss plus regularizer'' framework} (simplifying as much as possible, including converting to matrix notation):
+
+\begin{enumerate}
+	\item Laplace distribution likelihoods and priors,
+	$$y^i \sim \mathcal{L}(w^Tx^i,1), \quad w_j \sim \mathcal{L}\left(0,\frac{1}{\lambda}\right).$$
+	
+	Using the ``loss plus regularizer'' framework, we have
+	\begin{align*}
+		w^* \in \argmin_{w \in W} \sum_{i=1}^n -\log p(y^i | w, x^i) - \log p(w)
+	\end{align*}
+	and the probabilities for the Laplacian distribution
+	\begin{align*}
+		p(y^i | w, x^i) & = \frac{1}{2} \exp (- |y^i - w^Tx^i|) \\
+		p(w_j) & = \frac{1}{2} \exp(-\lambda |w|)
+	\end{align*}
+	This gives us our desired minimization
+	\begin{align*}
+		w^* & \in \argmin_{w \in W} \sum_{i=1}^n -\log \Big[\frac{1}{2} \exp (- |y^i - w^Tx^i|) \Big] - \log \Big[\frac{1}{2} \exp(-\lambda |w|) \Big] \\
+		& \in \argmin_{w \in W} \sum_{i=1}^n -\log \Big(\frac{1}{2} \Big) -\log \Big[\exp (- |y^i - w^Tx^i|) \Big] - \log \Big(\frac{1}{2}\Big) - \log \Big[\exp(-\lambda |w|) \Big]  \\
+		& \in \argmin_{w \in W} \sum_{i=1}^n |y^i - w^Tx^i| + \lambda |w|  \\
+		& \in \argmin_{w \in W} ||y- w^Tx^i||_{1} + \lambda ||w||_1
+	\end{align*}
+	or in matrix form
+	\begin{align*}
+		f(w) = ||Xw-y||_1 + \lambda ||w||_1
+	\end{align*}
+	
+	\item Gaussians with separate variance for each training example and variable,
+	$$y^i \sim \mathcal{N}(w^Tx^i,\sigma_i^2), \quad w_j \sim \mathcal{N}\left(0,\frac{1}{\lambda_j}\right).$$
+	Again using the ``loss plus regularizer'' framework, we have
+	\begin{align*}
+		w^* \in \argmin_{w \in W} \sum_{i=1}^n -\log p(y^i | w, x^i) - \log p(w)
+	\end{align*}
+	however, for our probabilities we now have
+	\begin{align*}
+		p(y^i | w, x^i) & = \frac{1}{\sqrt{2\sigma_i^2 \pi}} \exp \Big[- \frac{(y^i - w^Tx^i)^2}{2 \sigma_i^2}\Big] \\
+		p(w_j) & = \frac{1}{\sqrt{\frac{2\pi}{\lambda_i}}} \exp \Big[- \frac{\lambda_i}{2} w_j^2\Big]
+	\end{align*}
+	This gives us our desired minimization
+	\begin{align*}
+		w^* & \in \argmin_{w \in W} \sum_{i=1}^n -\log \Big[\frac{1}{\sqrt{2\sigma_i^2 \pi}} \exp \Big[- \frac{(y^i - w^Tx^i)^2}{2 \sigma_i^2}\Big] \Big] - \log \Big[\frac{1}{\sqrt{\frac{2\pi}{\lambda_i}}} \exp \Big[- \frac{\lambda_i}{2} w_j^2\Big] \Big] \\
+		& \in \argmin_{w \in W} \sum_{i=1}^n \frac{(y^i - w^Tx^i)^2}{2 \sigma_i^2} + \frac{\lambda_i}{2} w_j^2  \\
+		& \in \argmin_{w \in W} \frac{1}{2} \Big| \Big| \frac{(y^i - w^Tx^i)^2}{\sigma_i^2} \Big| \Big| ^2 + \frac{1}{2} \Big| \Big| \sqrt{\lambda_i} w_i \Big| \Big| ^2
+	\end{align*}
+	or in matrix form
+	\begin{align*}
+		f(w) = \frac{1}{2} ||\sigma^{-1}(Xw-y)||^2 + \frac{1}{2} ||Dw||^2
+	\end{align*}	
+	where $\sigma = \text{diag}(\sigma_1, \ldots, \sigma_n)$ and $D = \text{diag}(\sqrt{\lambda_1}, \ldots, \sqrt{\lambda_n})$
+	
+	
+	\item Poisson-distributed likelihood (for the case where $y^i$ represents discrete counts) and Gaussian prior,
+	$$y^i \sim \mathcal{P}(\exp(w^Tx^i)), \quad w_j \sim \mathcal{N}\left(0,\frac{1}{\lambda}\right),$$
+	
+	Using the ``loss plus regularizer'' framework, we have
+	\begin{align*}
+		w^* \in \argmin_{w \in W} \sum_{i=1}^n -\log p(y^i | w, x^i) - \log p(w)
+	\end{align*}
+	and the probabilities for the distributions
+	\begin{align*}
+		p(y^i | w, x^i) & = \frac{\exp (w^Tx^i)^{y^i} \cdot \exp[- \exp(w^Tx^i)]}{y_i!}\\
+		& = \frac{\exp (w^Tx^iy^i) \cdot \exp[- \exp(w^Tx^i)]}{y_i!} \\
+		p(w_j) & = \frac{1}{\sqrt{\frac{2\pi}{\lambda_i}}} \exp \Big[- \frac{\lambda_i}{2} w_j^2\Big]
+	\end{align*}
+	This gives us our desired minimization
+	\begin{align*}
+		w^* & \in \argmin_{w \in W} \sum_{i=1}^n -\log \Bigg[\frac{\exp (w^Tx^iy^i) \cdot \exp[- \exp(w^Tx^i)]}{y_i!}  \Bigg] - \log \Bigg[\frac{1}{\sqrt{\frac{2\pi}{\lambda_i}}} \exp \Big[- \frac{\lambda_i}{2} w_j^2\Big] \Bigg] \\
+		& \in \argmin_{w \in W} \sum_{i=1}^n -w^Tx^iy^i + \exp(w^Tx^i) + \log(y_i!) + \frac{\lambda}{2} w_i^2 \\
+		& \in \argmin_{w \in W} \sum_{i=1}^n -w^Tx^iy^i + \exp(w^Tx^i) + \frac{\lambda}{2} w_i^2 \\
+		& \in \argmin_{w \in W} \sum_{i=1}^n \Big[-w^Tx^iy^i + \exp(w^Tx^i)\Big] + \frac{\lambda}{2} ||w||^2
+	\end{align*}
+	or equivalently
+	\begin{align*}
+		f(w) = \sum_{i=1}^n \Big[-w^Tx^iy^i + \exp(w^Tx^i) \Big] + \frac{\lambda}{2} ||w||^2
+	\end{align*}
+\end{enumerate}
+
+

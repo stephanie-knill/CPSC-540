@@ -123,6 +123,27 @@
 %Miscellaneous
 \usepackage{wasysym} 	 					% \smiley{} \frownie{} \blacksmiley{}
 
+% ====== For CPSC340/540 ======
+\definecolor{blu}{rgb}{0,0,1}
+\def\blu#1{{\color{blu}#1}}
+\definecolor{gre}{rgb}{0,.5,0}
+\def\gre#1{{\color{gre}#1}}
+\definecolor{red}{rgb}{1,0,0}
+\def\red#1{{\color{red}#1}}
+\def\norm#1{\|#1\|}
+\newcommand{\argmin}[1]{\mathop{\hbox{argmin}}_{#1}}
+\newcommand{\argmax}[1]{\mathop{\hbox{argmax}}_{#1}}
+\def\R{\mathbb{R}}
+\newcommand{\fig}[2]{\includegraphics[width=#1\textwidth]{#2}}
+\newcommand{\centerfig}[2]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\end{center}}
+\def\items#1{\begin{itemize}#1\end{itemize}}
+\def\enum#1{\begin{enumerate}#1\end{enumerate}}
+\def\answer#1{\iftoggle{answers}{\blu{Answer}:\\#1}}
+\def\argmax{\mathop{\rm arg\,max}}
+\def\argmin{\mathop{\rm arg\,min}}
+\def\half{\frac 1 2}
+\newcommand{\code}[1]{\lstinputlisting[language=Matlab]{#1}}
+
 
 %================== Header & Footer =========================
 \usepackage{fancyhdr}
